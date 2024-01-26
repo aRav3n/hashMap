@@ -1,13 +1,14 @@
-// Code snippets from TOP
-/*
-  if (index < 0 || index >= buckets.length) {
-    throw new Error("Trying to access index out of bound");
-  }
-*/
-
 const hashMap = function () {
   const loadFactor = 0.8;
   const map = [];
+
+  // src: https://www.theodinproject.com/lessons/javascript-hashmap
+  const verifyValidInsertion = function (index) {
+    if (index < 0 || index >= map.length) {
+      throw new Error("Trying to access index out of bound");
+    }
+  };
+
   // function src: https://www.theodinproject.com/lessons/javascript-hashmap-data-structure#collisions
   const hash = function (string) {
     let hashCode = 0;
@@ -16,7 +17,7 @@ const hashMap = function () {
     for (let i = 0; i < string.length; i++) {
       hashCode = primeNumber * hashCode + string.charCodeAt(i);
     }
-
+    verifyValidInsertion(hashCode);
     return hashCode;
   };
 
@@ -29,10 +30,52 @@ const hashMap = function () {
         countOfKeyValuePairs += map[i].length;
       }
     }
+    return countOfKeyValuePairs;
   };
 
-  // set(key, value) if key exists already then overwrite.
-  // update table size if >= loadFactor capacity
+  const resize = function () {
+    const newMapSize = map.length * 2;
+    map.length = newMapSize;
+    return true;
+  };
+
+  const checkSize = function () {
+    const amountOfData = length();
+    const acceptableAmountOfData = loadFactor * map.length;
+    if (amountOfData >= acceptableAmountOfData) {
+      resize();
+      return true;
+    }
+    return false;
+  };
+
+  /* set(key, value) if key exists already then overwrite.
+  update table size if >= loadFactor capacity */
+  const set = function (key, value) {
+    checkSize();
+    const bucketToUse = hash(key);
+    const item = { key: key, value: value };
+    let bucket;
+    let arrayPosition;
+    if (map[bucketToUse].isArray()) {
+      bucket = map[bucketToUse];
+    } else {
+      bucket = [];
+    }
+    for (let i = 0; i < bucket.length; i++) {
+      if (bucket[i].key === key) {
+        arrayPosition = i;
+      } else {
+        arrayPosition = false;
+      }
+    }
+    if (arrayPosition) {
+      bucket[arrayPosition] = item;
+    } else {
+      bucket.push(item);
+    }
+    return true;
+  };
 
   // get(key) returns value else null
 
