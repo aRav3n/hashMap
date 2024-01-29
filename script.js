@@ -158,4 +158,17 @@ const hashMap = function () {
   };
 
   // entries() returns an array containing all key value pairs
+  const entries = function () {
+    const arrayOfItems = [];
+    for (let i = 0; i < map.length; i++) {
+      if (map[i].isArray()) {
+        const thisBucket = map[i];
+        for (let i = 0; i < thisBucket.length; i++) {
+          const thisItem = thisBucket[i];
+          arrayOfItems.push(thisItem);
+        }
+      }
+    }
+    return arrayOfItems;
+  };
 };
