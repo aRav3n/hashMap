@@ -171,6 +171,8 @@ const hashMap = function () {
     }
     return arrayOfItems;
   };
+
+  return { set, get, keys, has, remove, clear, values, entries };
 };
 
 const runTest = function () {
