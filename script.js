@@ -127,8 +127,11 @@ const hashMap = function () {
   const remove = function (key) {
     const keyHash = hash(key);
     const arrayOfKeys = map[keyHash];
-    if (arrayOfKeys.includes(key)) {
-      return true;
+    for (let i = 0; i < arrayOfKeys.length; i++) {
+      if (arrayOfKeys[i].key === key) {
+        arrayOfKeys.splice(i, 1);
+        return true;
+      }
     }
     return false;
   }
