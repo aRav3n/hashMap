@@ -5,7 +5,9 @@ const hashMap = function () {
   // src: https://www.theodinproject.com/lessons/javascript-hashmap
   const verifyValidInsertion = function (index) {
     if (index < 0 || index >= map.length) {
-      throw new Error("Trying to access index out of bound");
+      throw new Error(
+        `Trying to access index ${index}, which is out of bounds`
+      );
     }
   };
 
@@ -17,8 +19,14 @@ const hashMap = function () {
     for (let i = 0; i < string.length; i++) {
       hashCode = primeNumber * hashCode + string.charCodeAt(i);
     }
-    verifyValidInsertion(hashCode);
     return hashCode;
+  };
+
+  const pickABucket = function (string) {
+    const hashCode = hash(string);
+    const bucket = hashCode % map.length;
+    verifyValidInsertion(bucket);
+    return bucket;
   };
 
   // length() returns the number of stored keys
@@ -26,17 +34,48 @@ const hashMap = function () {
     let countOfKeyValuePairs = 0;
     const mapLength = map.length;
     for (let i = 0; i < mapLength; i++) {
-      if (map[i].isArray()) {
+      if (map[i] !== undefined) {
         countOfKeyValuePairs += map[i].length;
       }
     }
     return countOfKeyValuePairs;
   };
 
+  // entries() returns an array containing all key value pairs
+  const entries = function () {
+    const arrayOfItems = [];
+    for (let i = 0; i < map.length; i++) {
+      if (map[i] !== undefined) {
+        const thisBucket = map[i];
+        for (let j = 0; j < thisBucket.length; j++) {
+          const thisItem = thisBucket[i];
+          arrayOfItems.push(thisItem);
+        }
+      }
+    }
+    return arrayOfItems;
+  };
+
+  const reassignOldItems = function (arrayOfOldItems) {
+    while (arrayOfOldItems.length > 0) {
+      const thisObject = arrayOfOldItems.shift();
+      const bucket = map[pickABucket(thisObject.key)];
+      if (bucket !== undefined) {
+        bucket.push(thisObject);
+      } else {
+        bucket = [];
+        bucket[0] = thisObject;
+      }
+    }
+  };
+
   const resize = function () {
     if (map.length > 0) {
+      const oldEntries = entries();
       const newMapSize = map.length * 2;
+      map = [];
       map.length = newMapSize;
+      reassignOldItems(oldEntries);
     } else {
       map.length = 16;
     }
@@ -48,30 +87,29 @@ const hashMap = function () {
     const acceptableAmountOfData = loadFactor * map.length;
     if (amountOfData >= acceptableAmountOfData) {
       resize();
-      return true;
     }
-    return false;
   };
 
   /* set(key, value) if key exists already then overwrite.
   update table size if >= loadFactor capacity 
   Object structure: { key, value } */
   const set = function (key, value) {
-    checkSize();
-    const bucketToUse = hash(key);
     const item = { key: key, value: value };
-    let bucket;
     let arrayPosition;
-    if (map[bucketToUse].isArray()) {
-      bucket = map[bucketToUse];
-    } else {
-      bucket = [];
+
+    checkSize();
+
+    if (map[pickABucket(key)] === undefined) {
+      map[pickABucket(key)] = [];
     }
+
+    const bucket = map[pickABucket(key)];
+
+    console.log(bucket);
+
     for (let i = 0; i < bucket.length; i++) {
       if (bucket[i].key === key) {
         arrayPosition = i;
-      } else {
-        arrayPosition = false;
       }
     }
     if (arrayPosition) {
@@ -84,9 +122,9 @@ const hashMap = function () {
 
   // get(key) returns the key's value, else null
   const get = function (key) {
-    const keyHash = hash(key);
-    const bucket = map[keyHash];
-    if (bucket.isArray()) {
+    const whichBucket = pickABucket(key);
+    const bucket = map[whichBucket];
+    if (bucket !== undefined) {
       for (let i = 0; i < bucket.length; i++) {
         if (bucket[i].key === key) {
           return bucket[i].value;
@@ -100,10 +138,10 @@ const hashMap = function () {
   const keys = function () {
     const arrayOfKeys = [];
     for (let i = 0; i < map.length; i++) {
-      if (map[i].isArray()) {
+      if (map[i] !== undefined) {
         const thisBucket = map[i];
-        for (let i = 0; i < thisBucket.length; i++) {
-          const thisKey = thisBucket[i].key;
+        for (let j = 0; j < thisBucket.length; j++) {
+          const thisKey = thisBucket[j].key;
           arrayOfKeys.push(thisKey);
         }
       }
@@ -113,8 +151,8 @@ const hashMap = function () {
 
   // has(key) returns a boolean
   const has = function (key) {
-    const keyHash = hash(key);
-    const arrayOfKeys = map[keyHash];
+    const whichBucket = pickABucket(key);
+    const arrayOfKeys = map[whichBucket];
     for (let i = 0; i < arrayOfKeys.length; i++) {
       if (arrayOfKeys[i].key === key) {
         return true;
@@ -125,8 +163,8 @@ const hashMap = function () {
 
   // remove(key) returns a boolean
   const remove = function (key) {
-    const keyHash = hash(key);
-    const arrayOfKeys = map[keyHash];
+    const whichBucket = pickABucket(key);
+    const arrayOfKeys = map[whichBucket];
     for (let i = 0; i < arrayOfKeys.length; i++) {
       if (arrayOfKeys[i].key === key) {
         arrayOfKeys.splice(i, 1);
@@ -139,17 +177,17 @@ const hashMap = function () {
   // clear() clears the hashTable
   const clear = function () {
     map = [];
-    map.length = 16;
+    resize();
   };
 
   // values() returns an array with all values in hashTable
   const values = function () {
     const arrayOfValues = [];
     for (let i = 0; i < map.length; i++) {
-      if (map[i].isArray()) {
+      if (map[i] !== undefined) {
         const thisBucket = map[i];
-        for (let i = 0; i < thisBucket.length; i++) {
-          const thisValue = thisBucket[i].value;
+        for (let j = 0; i < thisBucket.length; j++) {
+          const thisValue = thisBucket[j].value;
           arrayOfKeys.push(thisValue);
         }
       }
@@ -157,26 +195,28 @@ const hashMap = function () {
     return arrayOfValues;
   };
 
-  // entries() returns an array containing all key value pairs
-  const entries = function () {
-    const arrayOfItems = [];
-    for (let i = 0; i < map.length; i++) {
-      if (map[i].isArray()) {
-        const thisBucket = map[i];
-        for (let i = 0; i < thisBucket.length; i++) {
-          const thisItem = thisBucket[i];
-          arrayOfItems.push(thisItem);
-        }
-      }
-    }
-    return arrayOfItems;
-  };
-
-  return { set, get, keys, has, remove, clear, values, entries };
+  return { map, set, get, keys, has, remove, clear, values, entries };
 };
 
 const runTest = function () {
   const starWarsCharacters = hashMap();
+  const logCharacterArray = function () {
+    let string = "";
+    for (let i = 0; i < starWarsCharacters.map.length; i++) {
+      if (starWarsCharacters.map[i] !== undefined) {
+        const thisBucket = starWarsCharacters.map[i];
+        for (let j = 0; j < thisBucket.length; j++) {
+          const thisItem = thisBucket[j];
+          const itemString = `[ ${thisItem.key}, ${thisItem.value} ]`;
+          if (j < thisBucket.length - 1) {
+            itemString += ", ";
+          }
+          string += itemString;
+        }
+      }
+    }
+    console.log(string);
+  };
   console.log("new hash map created");
   starWarsCharacters.set("Jyn Erso", "an A-180 blaster pistol");
   starWarsCharacters.set(
@@ -192,6 +232,7 @@ const runTest = function () {
   console.log(
     "various key value pairs of cool Star Wars characters and their weapons of choice have been set"
   );
+  logCharacterArray();
   const hanSoloWeapon = starWarsCharacters.get("Han Solo");
   console.log(
     `according to our hash table, Han Solo's weapon of choice is: ${hanSoloWeapon}`
