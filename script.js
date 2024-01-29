@@ -26,7 +26,7 @@ const hashMap = function () {
     let countOfKeyValuePairs = 0;
     const mapLength = map.length;
     for (let i = 0; i < mapLength; i++) {
-      if (map[i] !== undefined) {
+      if (map[i].isArray()) {
         countOfKeyValuePairs += map[i].length;
       }
     }
@@ -82,7 +82,7 @@ const hashMap = function () {
   const get = function (key) {
     const keyHash = hash(key);
     const bucket = map[keyHash];
-    if (bucket.isArray) {
+    if (bucket.isArray()) {
       for (let i = 0; i < bucket.length; i++) {
         if (bucket[i].key === key) {
           return bucket[i].value;
@@ -93,6 +93,19 @@ const hashMap = function () {
   };
 
   // keys() returns array containing all keys
+  const keys = function () {
+    const arrayOfKeys = [];
+    for (let i = 0; i < map.length; i++) {
+      if (map[i].isArray()) {
+        const thisBucket = map[i];
+        for (let i = 0; i < thisBucket.length; i++) {
+          const thisKey = thisBucket[i].key;
+          arrayOfKeys.push(thisKey);
+        }
+      }
+    }
+    return arrayOfKeys;
+  };
 
   // has(key) returns a boolean
 
