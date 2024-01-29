@@ -112,6 +112,14 @@ const hashMap = function () {
   };
 
   // has(key) returns a boolean
+  const has = function (key) {
+    const keyHash = hash(key);
+    const arrayOfKeys = map[keyHash];
+    if (arrayOfKeys.includes(key)) {
+      return true;
+    }
+    return false;
+  }
 
   // remove(key) returns a boolean
 
