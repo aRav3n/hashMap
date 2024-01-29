@@ -34,8 +34,12 @@ const hashMap = function () {
   };
 
   const resize = function () {
-    const newMapSize = map.length * 2;
-    map.length = newMapSize;
+    if (map.length > 0) {
+      const newMapSize = map.length * 2;
+      map.length = newMapSize;
+    } else {
+      map.length = 16;
+    }
     return true;
   };
 
