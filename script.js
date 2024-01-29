@@ -143,6 +143,19 @@ const hashMap = function () {
   };
 
   // values() returns an array with all values in hashTable
+  const values = function () {
+    const arrayOfValues = [];
+    for (let i = 0; i < map.length; i++) {
+      if (map[i].isArray()) {
+        const thisBucket = map[i];
+        for (let i = 0; i < thisBucket.length; i++) {
+          const thisValue = thisBucket[i].value;
+          arrayOfKeys.push(thisValue);
+        }
+      }
+    }
+    return arrayOfValues;
+  };
 
   // entries() returns an array containing all key value pairs
 };
