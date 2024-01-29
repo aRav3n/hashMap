@@ -89,7 +89,7 @@ const hashMap = function () {
         const thisObject = arrayOfOldItems[i];
         arrayOfOldItems.shift();
         let bucket = map[pickABucket(thisObject.key)];
-        if (bucket !== undefined && bucket.isArray()) {
+        if (bucket !== undefined && Array.isArray(bucket)) {
           bucket.push(thisObject);
         } else {
           bucket = [];
@@ -247,7 +247,7 @@ const runTest = function () {
   starWarsCharacters.set("Kylo Ren", "a red bladed crossguard lightsaber");
   starWarsCharacters.set("Darth Vader", "a red lightsaber");
   starWarsCharacters.set("Han Solo", "the Millennium Falcon");
-  // addEntriesToHashMap(25);
+  addEntriesToHashMap(25);
   console.log(
     "various key value pairs of cool Star Wars characters and their weapons of choice have been set"
   );
@@ -295,5 +295,3 @@ const runTest = function () {
   console.log(blankArray);
   console.log("*** tests complete ***");
 };
-
-runTest();
