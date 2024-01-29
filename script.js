@@ -50,7 +50,8 @@ const hashMap = function () {
   };
 
   /* set(key, value) if key exists already then overwrite.
-  update table size if >= loadFactor capacity */
+  update table size if >= loadFactor capacity 
+  Object structure: { key, value } */
   const set = function (key, value) {
     checkSize();
     const bucketToUse = hash(key);
@@ -77,7 +78,19 @@ const hashMap = function () {
     return true;
   };
 
-  // get(key) returns value else null
+  // get(key) returns the key's value, else null
+  const get = function (key) {
+    const keyHash = hash(key);
+    const bucket = map[keyHash];
+    if (bucket.isArray) {
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i].key === key) {
+          return bucket[i].value;
+        }
+      }
+    }
+    return null;
+  };
 
   // keys() returns array containing all keys
 
