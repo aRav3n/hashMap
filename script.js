@@ -172,3 +172,54 @@ const hashMap = function () {
     return arrayOfItems;
   };
 };
+
+const runTest = function () {
+  const starWarsCharacters = hashMap();
+  console.log("new hash map created");
+  starWarsCharacters.set("Jyn Erso", "an A-180 blaster pistol");
+  starWarsCharacters.set(
+    "Cassian Andor",
+    "a BlasTech A280-CFE convertible heavy blaster pistol"
+  );
+  starWarsCharacters.set("Darth Maul", "a double bladed red lightsaber");
+  starWarsCharacters.set("Obi Wan Kenobi", "a green lightsaber");
+  starWarsCharacters.set("Luke Skywalker", "a blue lightsaber");
+  starWarsCharacters.set("Kylo Ren", "a red bladed crossguard lightsaber");
+  starWarsCharacters.set("Darth Vader", "a red lightsaber");
+  starWarsCharacters.set("Han Solo", "a modified DL-44 heavy blaster pistol");
+  console.log(
+    "various key value pairs of cool Star Wars characters and their weapons of choice have been set"
+  );
+  const hanSoloWeapon = starWarsCharacters.get("Han Solo");
+  console.log(
+    `according to our hash table, Han Solo's weapon of choice is: ${hanSoloWeapon}`
+  );
+  console.log(
+    `here is an array of our favorite Star Wars characters: ${starWarsCharacters.keys()}`
+  );
+  if (starWarsCharacters.has("Jyn Erso")) {
+    console.log("Yes, Jyn Erso is a great character");
+  } else {
+    console.log(
+      "hey something is wrong here, Jyn Erso should be in that table"
+    );
+  }
+  console.log(
+    "actually, Kylo Ren was kind of a whiny baby; let's remove him from the cool characters array"
+  );
+  starWarsCharacters.remove("Kylo Ren");
+  console.log(
+    `ah, that's better; here's a better array of cool characters without that whiny baby in it: ${starWarsCharacters.keys()}`
+  );
+  console.log(
+    `now for an array of all our favorite characters' weapons of choice: ${starWarsCharacters.values()}`
+  );
+  console.log(
+    `here's our favorite characters and their favorite weapons: ${starWarsCharacters.entries()}`
+  );
+  console.log("well I guess we're done here; let's clear the array");
+  starWarsCharacters.clear();
+  console.log(`here's a blank array: ${starWarsCharacters.entries}`);
+};
+
+runTest();
