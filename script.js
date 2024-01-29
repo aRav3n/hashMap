@@ -41,43 +41,82 @@ const hashMap = function () {
     return countOfKeyValuePairs;
   };
 
-  // entries() returns an array containing all key value pairs
-  const entries = function () {
-    const arrayOfItems = [];
+  // keys() returns array containing all keys
+  const keys = function () {
+    const arrayOfKeys = [];
     for (let i = 0; i < map.length; i++) {
       if (map[i] !== undefined) {
         const thisBucket = map[i];
         for (let j = 0; j < thisBucket.length; j++) {
-          const thisItem = thisBucket[i];
-          arrayOfItems.push(thisItem);
+          const thisKey = thisBucket[j].key;
+          arrayOfKeys.push(thisKey);
         }
       }
     }
-    return arrayOfItems;
+    return arrayOfKeys;
+  };
+
+  // get(key) returns the key's value, else null
+  const get = function (key) {
+    const whichBucket = pickABucket(key);
+    const bucket = map[whichBucket];
+    if (bucket !== undefined) {
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i].key === key) {
+          return bucket[i].value;
+        }
+      }
+    }
+    return null;
+  };
+
+  // entries() returns an array containing all key value pairs
+  const entries = function () {
+    const arrayOfKeys = keys();
+    const arrayOfObjects = [];
+    for (let i = 0; i < arrayOfKeys.length; i++) {
+      const key = arrayOfKeys[i];
+      const value = get(key);
+      const thisObject = { key: key, value: value };
+      arrayOfObjects.push(thisObject);
+    }
+    return arrayOfObjects;
   };
 
   const reassignOldItems = function (arrayOfOldItems) {
-    while (arrayOfOldItems.length > 0) {
-      const thisObject = arrayOfOldItems.shift();
-      const bucket = map[pickABucket(thisObject.key)];
-      if (bucket !== undefined) {
-        bucket.push(thisObject);
-      } else {
-        bucket = [];
-        bucket[0] = thisObject;
+    if (arrayOfOldItems !== undefined) {
+      for (let i = 0; i < arrayOfOldItems.length; i++) {
+        const thisObject = arrayOfOldItems[i];
+        arrayOfOldItems.shift();
+        let bucket = map[pickABucket(thisObject.key)];
+        if (bucket !== undefined && bucket.isArray()) {
+          bucket.push(thisObject);
+        } else {
+          bucket = [];
+          bucket[0] = thisObject;
+        }
       }
     }
   };
 
   const resize = function () {
+    const makeBucketsIntoArrays = function () {
+      for (let i = 0; i < map.length; i++) {
+        if (map[i] === undefined) {
+          map[i] = [];
+        }
+      }
+    };
     if (map.length > 0) {
       const oldEntries = entries();
-      const newMapSize = map.length * 2;
-      map = [];
+      const newMapSize = map.length * 2 - 1;
+      map.length = 0;
       map.length = newMapSize;
+      makeBucketsIntoArrays();
       reassignOldItems(oldEntries);
     } else {
-      map.length = 16;
+      map.length = 17;
+      makeBucketsIntoArrays();
     }
     return true;
   };
@@ -116,35 +155,6 @@ const hashMap = function () {
       bucket.push(item);
     }
     return true;
-  };
-
-  // get(key) returns the key's value, else null
-  const get = function (key) {
-    const whichBucket = pickABucket(key);
-    const bucket = map[whichBucket];
-    if (bucket !== undefined) {
-      for (let i = 0; i < bucket.length; i++) {
-        if (bucket[i].key === key) {
-          return bucket[i].value;
-        }
-      }
-    }
-    return null;
-  };
-
-  // keys() returns array containing all keys
-  const keys = function () {
-    const arrayOfKeys = [];
-    for (let i = 0; i < map.length; i++) {
-      if (map[i] !== undefined) {
-        const thisBucket = map[i];
-        for (let j = 0; j < thisBucket.length; j++) {
-          const thisKey = thisBucket[j].key;
-          arrayOfKeys.push(thisKey);
-        }
-      }
-    }
-    return arrayOfKeys;
   };
 
   // has(key) returns a boolean
@@ -237,7 +247,7 @@ const runTest = function () {
   starWarsCharacters.set("Kylo Ren", "a red bladed crossguard lightsaber");
   starWarsCharacters.set("Darth Vader", "a red lightsaber");
   starWarsCharacters.set("Han Solo", "the Millennium Falcon");
-  addEntriesToHashMap(25);
+  // addEntriesToHashMap(25);
   console.log(
     "various key value pairs of cool Star Wars characters and their weapons of choice have been set"
   );
@@ -275,8 +285,9 @@ const runTest = function () {
   );
   console.log(starWarsCharacters.values());
   console.log(
-    `here's our favorite characters and their favorite weapons: ${starWarsCharacters.entries()}`
+    "*** entries() test*** here's our favorite characters and their favorite weapons:"
   );
+  console.log(starWarsCharacters.entries());
   console.log("well I guess we're done here; let's clear the array");
   starWarsCharacters.clear();
   const blankArray = starWarsCharacters.entries();
