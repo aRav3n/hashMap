@@ -121,7 +121,7 @@ const hashMap = function () {
       }
     }
     return false;
-  }
+  };
 
   // remove(key) returns a boolean
   const remove = function (key) {
@@ -134,9 +134,13 @@ const hashMap = function () {
       }
     }
     return false;
-  }
+  };
 
   // clear() clears the hashTable
+  const clear = function () {
+    map = [];
+    map.length = 16;
+  };
 
   // values() returns an array with all values in hashTable
 
