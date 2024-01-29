@@ -115,13 +115,23 @@ const hashMap = function () {
   const has = function (key) {
     const keyHash = hash(key);
     const arrayOfKeys = map[keyHash];
-    if (arrayOfKeys.includes(key)) {
-      return true;
+    for (let i = 0; i < arrayOfKeys.length; i++) {
+      if (arrayOfKeys[i].key === key) {
+        return true;
+      }
     }
     return false;
   }
 
   // remove(key) returns a boolean
+  const remove = function (key) {
+    const keyHash = hash(key);
+    const arrayOfKeys = map[keyHash];
+    if (arrayOfKeys.includes(key)) {
+      return true;
+    }
+    return false;
+  }
 
   // clear() clears the hashTable
 
