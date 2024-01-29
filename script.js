@@ -105,8 +105,6 @@ const hashMap = function () {
 
     const bucket = map[pickABucket(key)];
 
-    console.log(bucket);
-
     for (let i = 0; i < bucket.length; i++) {
       if (bucket[i].key === key) {
         arrayPosition = i;
@@ -176,7 +174,7 @@ const hashMap = function () {
 
   // clear() clears the hashTable
   const clear = function () {
-    map = [];
+    map.length = 0;
     resize();
   };
 
@@ -186,9 +184,11 @@ const hashMap = function () {
     for (let i = 0; i < map.length; i++) {
       if (map[i] !== undefined) {
         const thisBucket = map[i];
-        for (let j = 0; i < thisBucket.length; j++) {
-          const thisValue = thisBucket[j].value;
-          arrayOfKeys.push(thisValue);
+        for (let j = 0; j < thisBucket.length; j++) {
+          if (thisBucket[j] !== undefined) {
+            const thisValue = thisBucket[j].value;
+            arrayOfValues.push(thisValue);
+          }
         }
       }
     }
@@ -208,15 +208,23 @@ const runTest = function () {
         for (let j = 0; j < thisBucket.length; j++) {
           const thisItem = thisBucket[j];
           const itemString = `[ ${thisItem.key}, ${thisItem.value} ]`;
-          if (j < thisBucket.length - 1) {
-            itemString += ", ";
-          }
           string += itemString;
+          if (j < thisBucket.length - 1) {
+            string += ", ";
+          }
         }
       }
     }
     console.log(string);
   };
+  const addEntriesToHashMap = function (number) {
+    for (let i = 0; i < number; i++) {
+      const key = `Extra Character ${i + 1}`;
+      const value = `Extra Weapon ${i + 1}`;
+      starWarsCharacters.set(key, value);
+    }
+  };
+  console.log("*** begin tests ***");
   console.log("new hash map created");
   starWarsCharacters.set("Jyn Erso", "an A-180 blaster pistol");
   starWarsCharacters.set(
@@ -228,18 +236,25 @@ const runTest = function () {
   starWarsCharacters.set("Luke Skywalker", "a blue lightsaber");
   starWarsCharacters.set("Kylo Ren", "a red bladed crossguard lightsaber");
   starWarsCharacters.set("Darth Vader", "a red lightsaber");
-  starWarsCharacters.set("Han Solo", "a modified DL-44 heavy blaster pistol");
+  starWarsCharacters.set("Han Solo", "the Millennium Falcon");
+  addEntriesToHashMap(25);
   console.log(
     "various key value pairs of cool Star Wars characters and their weapons of choice have been set"
   );
   logCharacterArray();
-  const hanSoloWeapon = starWarsCharacters.get("Han Solo");
   console.log(
-    `according to our hash table, Han Solo's weapon of choice is: ${hanSoloWeapon}`
+    `according to our hash table, Han Solo's weapon of choice is: ${starWarsCharacters.get(
+      "Han Solo"
+    )}`
   );
+  starWarsCharacters.set("Han Solo", "a modified DL-44 heavy blaster pistol");
   console.log(
-    `here is an array of our favorite Star Wars characters: ${starWarsCharacters.keys()}`
+    `oops, Han Solo's weapon of choice wasn't that, it's been reset to: ${starWarsCharacters.get(
+      "Han Solo"
+    )}`
   );
+  console.log("here is an array of our favorite Star Wars characters:");
+  console.log(starWarsCharacters.keys());
   if (starWarsCharacters.has("Jyn Erso")) {
     console.log("Yes, Jyn Erso is a great character");
   } else {
@@ -252,17 +267,22 @@ const runTest = function () {
   );
   starWarsCharacters.remove("Kylo Ren");
   console.log(
-    `ah, that's better; here's a better array of cool characters without that whiny baby in it: ${starWarsCharacters.keys()}`
+    "here is an array of our favorite Star Wars characters with that whiny baby removed:"
   );
+  console.log(starWarsCharacters.keys());
   console.log(
-    `now for an array of all our favorite characters' weapons of choice: ${starWarsCharacters.values()}`
+    "now for an array of all our favorite characters' weapons of choice:"
   );
+  console.log(starWarsCharacters.values());
   console.log(
     `here's our favorite characters and their favorite weapons: ${starWarsCharacters.entries()}`
   );
   console.log("well I guess we're done here; let's clear the array");
   starWarsCharacters.clear();
-  console.log(`here's a blank array: ${starWarsCharacters.entries}`);
+  const blankArray = starWarsCharacters.entries();
+  console.log("here's a blank array:");
+  console.log(blankArray);
+  console.log("*** tests complete ***");
 };
 
 runTest();
